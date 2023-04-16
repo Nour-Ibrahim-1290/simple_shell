@@ -2,18 +2,25 @@
 #include <stdio.h>
 
 /**
+ * main - prompt to our shell
  *
- *
+ * Return: 0, -1 for exit
  */
 
 int print_str(char *str);
+int _strcmp(char * command, char *str);
 
-int main(void)
+int main(int ac, char **argv)
 {
 	char *prompt = "(eshell) $ ";
-	char *command;
+	char *command = NULL, *command_copy = NULL, *token;
+	const char *delim = " \n";
 	size_t n = 0;
 	ssize_t num_chars_read;
+	int num_tokens, i;
+
+	/* voiding unused vars*/
+	(void)ac;
 
 	while (1)
 	{
@@ -31,16 +38,64 @@ int main(void)
 		/* its better to include in parsing section */
 		if (num_chars_read == 5)
 		{
-			if(strcmp(command, "exit\n") == 0)
+			if(_strcmp(command, "exit\n") == 0)
 			{
 				print_str("exiting shell ... \n");
 				return (-1);
 			}
 		}
-		print_str(command);
+		/* create a copy from command*/
+		command_copy = malloc(sizeof(char) * num_chars_read);
+		if (command_copy == NULL)
+		{
+			perror("memory allocation error");
+			return (-1);
+		}
+		strcpy(command_copy, command);
+
+		/**Tokenization as the main part of Parsing*/
+		/* split the command string into an array of tokens*/
+		token = strtok(command, delim);
+		/* determine number of tokens*/
+		while (token != NULL)
+		{
+			num_tokens++;
+			token = strtok(NULL, delim);
+		}
+		num_tokens++;
+
+		/* Read the tokens them selves*/
+		argv = malloc(sizeof(char *) * num_tokens);
+
+		token = strtok(command_copy, delim);
+		for (i = 0; token != NULL; i++)
+		{
+			argv[i] = malloc(sizeof(char) * strlen(token));
+			strcpy(argv[i], token);
+			printf("In for!!!\n");
+			token = strtok(NULL, delim);
+		}
+		argv[i] = NULL;
+
+		for (i = 0; i < num_tokens-1; i++)
+		{
+			printf("In for for printing!!");
+			print_str(argv[i]);
+			print_str("\n");
+		}
 	}
+	free(command);
+	free(command_copy);
+	free(argv);
 }
 
+
+/**
+ * print_str - print string to the standard output
+ * @str: string to print
+ * 
+ * Return: number of chars printed
+ */
 int print_str(char *str)
 {
 	int len = 0;
@@ -56,4 +111,25 @@ int print_str(char *str)
 		len++;
 	}
 	return (len);
+}
+
+/**
+ * strcmp_exit - compare the 2 strings
+ * @command: command to compare
+ * @sttr: string to comapre to
+ *
+ * Return: 0 Success, -1 for failure
+ */
+int _strcmp(char *command, char *str)
+{
+	int i = 0;
+
+	while(command[i] && str[i])
+	{
+		if (command[i] != str[i])
+			return (-1);
+		i++;
+	}
+
+	return (0);
 }
