@@ -7,9 +7,6 @@
  * Return: 0, -1 for exit
  */
 
-int print_str(char *str);
-int _strcmp(char * command, char *str);
-
 int main(int ac, char **argv)
 {
 	char *prompt = "(eshell) $ ";
@@ -76,59 +73,9 @@ int main(int ac, char **argv)
 			token = strtok(NULL, delim);
 		}
 		argv[i] = NULL;
-
-		for (i = 0; i < num_tokens-1; i++)
-		{
-			print_str(argv[i]);
-			print_str(" ");
-		}
+		/* executable case */
+		start_execute(argv);
 	}
 	free(command);
 	free(command_copy);
-	free(argv);
-}
-
-
-/**
- * print_str - print string to the standard output
- * @str: string to print
- * 
- * Return: number of chars printed
- */
-int print_str(char *str)
-{
-	int len = 0;
-
-	if (str == NULL)
-		return (-1);
-	
-	/* printf("%s\n", str); */
-	/* handling if write fails */
-	while (str[len] != '\0')
-	{
-		write(1, &str[len], 1);
-		len++;
-	}
-	return (len);
-}
-
-/**
- * strcmp_exit - compare the 2 strings
- * @command: command to compare
- * @sttr: string to comapre to
- *
- * Return: 0 Success, -1 for failure
- */
-int _strcmp(char *command, char *str)
-{
-	int i = 0;
-
-	while(command[i] && str[i])
-	{
-		if (command[i] != str[i])
-			return (-1);
-		i++;
-	}
-
-	return (0);
 }

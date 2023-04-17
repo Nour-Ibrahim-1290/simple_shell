@@ -1,12 +1,13 @@
 Back Logged...
 - How to print local user of the machine as the head of our shell?
-- reimplement exit case after Parsing
+- reimplement exit case after Parsing - 
 - implement _strcmp - DONE
-- implement _strcpy and _strlen
-- Error - at 1st for loop in Parsing (segmentation fault)
+- implement _strcpy and _strlen - DONE
+- Error - at 1st for loop in Parsing (segmentation fault) - DONE
 
 Test Cases...
 I. main.c
 - test main prompt with echo only
 - test with exit condition
 - test after implementing _strcmp
+- test after tokenization
