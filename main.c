@@ -14,7 +14,7 @@ int main(int ac, char **argv)
 {
 	char *prompt = "(eshell) $ ";
 	char *command = NULL, *command_copy = NULL, *token;
-	const char *delim = " \n";
+	const char *delim = " ";
 	size_t n = 0;
 	ssize_t num_chars_read;
 	int num_tokens, i;
@@ -24,6 +24,7 @@ int main(int ac, char **argv)
 
 	while (1)
 	{
+		num_tokens = 0;
 		print_str(prompt);
 		num_chars_read = getline(&command, &n, stdin);
 
@@ -72,16 +73,14 @@ int main(int ac, char **argv)
 		{
 			argv[i] = malloc(sizeof(char) * strlen(token));
 			strcpy(argv[i], token);
-			printf("In for!!!\n");
 			token = strtok(NULL, delim);
 		}
 		argv[i] = NULL;
 
 		for (i = 0; i < num_tokens-1; i++)
 		{
-			printf("In for for printing!!");
 			print_str(argv[i]);
-			print_str("\n");
+			print_str(" ");
 		}
 	}
 	free(command);
