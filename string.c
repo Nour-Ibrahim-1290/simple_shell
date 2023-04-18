@@ -101,7 +101,7 @@ char *_strcpy(char *dest, char *src)
 
 
 /**
- * _strncat - a function that concatenates two strings.
+ * _strcat - a function that concatenates two strings.
  * @dest: the destination string to be concatenated to
  * @src: the source string to concatenate
  *

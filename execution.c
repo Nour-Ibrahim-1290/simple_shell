@@ -1,35 +1,22 @@
 #include "main.h"
-
+#include <stdio.h>
 /**
  *
  */
 
+extern char **environ;
+
 void start_execute(char **argv)
 {
-	char *path;
-	char *command;
+	char *var;
+	char **env = (char **)malloc(2* sizeof(char*));
 
-	if (argv != NULL)
-	{
-		command = argv[0];
+	printf("%s%d\n", argv[0], _strlen(argv[0]));
+	var = get_env("PATH");
+	printf("%s\n", var);
+	env[0] = var;
+	env[1] = NULL;
 
-		path = malloc(sizeof(char) * (_strlen(command) + 9));
-		if (path == NULL)
-		{
-			print_str("memory allocation error");
-			return;
-		}
-		path = _strcpy(path, "/usr/bin/");
-		path = _strcat(path, command);
-		
-		print_str(path);
-		print_str(getenv("PATH"));
-
-		if (execve(path, argv, NULL) == -1)
-		{
-			perror("Error: ");
-		}
-
-		free(path);
-	}
+	if (execve(argv[0], argv, env) == -1)
+		perror("Error");
 }
