@@ -2,15 +2,16 @@
 #include <stdio.h>
 
 int print_str(char *str);
-int _strcmp(char * command, char *str);
+int _strcmp(char *command, char *str);
 int _strlen(char *s);
 char *_strcpy(char *dest, char *src);
 char *_strcat(char *dest, char *src);
+int _strncmp(char*, char*, int);
 
 /**
  * print_str - print string to the standard output
  * @str: string to print
- * 
+ *
  * Return: number of chars printed
  */
 
@@ -20,8 +21,7 @@ int print_str(char *str)
 
 	if (str == NULL)
 		return (-1);
-	
-	/* printf("%s\n", str); */
+
 	/* handling if write fails */
 	while (str[len] != '\0')
 	{
@@ -32,9 +32,9 @@ int print_str(char *str)
 }
 
 /**
- * strcmp_exit - compare the 2 strings
+ * _strcmp - compare the 2 strings
  * @command: command to compare
- * @sttr: string to comapre to
+ * @str: string to comapre to
  *
  * Return: 0 Success, -1 for failure
  */
@@ -42,7 +42,7 @@ int _strcmp(char *command, char *str)
 {
 	int i = 0;
 
-	while(command[i] && str[i])
+	while (command[i] && str[i])
 	{
 		if (command[i] != str[i])
 			return (-1);
@@ -118,7 +118,7 @@ char *_strcat(char *dest, char *src)
 	destLen = _strlen(dest);
 	srcLen = _strlen(src);
 	j = 0;
-	
+
 	for (i = destLen; i < (destLen + srcLen); i++)
 	{
 		*(dest + i) = *(src + j);
@@ -129,4 +129,36 @@ char *_strcat(char *dest, char *src)
 		}
 	}
 	return (dest);
+}
+
+
+/**
+ * _strncmp - a function that compares two strings.
+ * @s1: the first string
+ * @s2: the second string to be compared to s1
+ * @n: the limit
+ *
+ * Return: if s1 < s2  --> -ve vlaue
+ *		   if s1 == s2 --> zero
+ *		   if s1 > s2  --> +ve value
+ */
+
+int _strncmp(char *s1, char *s2, int n)
+{
+	int i;
+
+	i = 0;
+	while (*(s1 + i) != '\0' && *(s2 + i) != '\0' && i < n)
+	{
+		if (*(s1 + i) == *(s2 + i))
+		{
+			i++;
+		}
+		else
+			break;
+	}
+	if (*(s1 + i) == *(s2 + i) || i == n)
+		return (0);
+	else
+		return ((int)(*(s1 + i)) - (int)(*(s2 + i)));
 }
