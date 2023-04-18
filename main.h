@@ -7,18 +7,22 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <limits.h>
+#include <sys/stat.h>
 
-/* strings prototypes */
-int print_str(char*);
-int _strcmp(char*, char*);
-int _strlen(char*);
+/* handling enviromental values */
+char *_getenv(char *name);
+void execute(char **argv);
+char *get_location(char *command);
+
+/* parsing */
+void parse(char *, ssize_t, char **);
+
+/* string functions */
+int print_str(char *str);
+int _strcmp(char * command, char *str);
+int _strlen(char *s);
+char *_strcat(char *dest, char *src);
+char *_strcpy(char *dest, char *src);
 int _strncmp(char *, char *, int);
-char *_strcat(char*, char*);
-char *_strcpy(char*, char*);
-char *_strncpy(char*, char*, int);
-char *_strncat(char*, char*, int);
 
-char *get_env(char*);
-void start_execute(char**);
 #endif
-

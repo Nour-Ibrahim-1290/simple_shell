@@ -4,6 +4,11 @@ Back Logged...
 - implement _strcmp - DONE
 - implement _strcpy and _strlen - DONE
 - Error - at 1st for loop in Parsing (segmentation fault) - DONE
+- Implementation of gentenv - DONE
+- execution of executable commands - DONE
+- separation of parsing from main - DONE
+
+Status: betty has an issue with calling environ in execute.c
 
 Test Cases...
 I. main.c
@@ -11,3 +16,6 @@ I. main.c
 - test with exit condition
 - test after implementing _strcmp
 - test after tokenization
+- test after implementing getenv
+- test after implementing execute
+- test after separating parsing from main
