@@ -8,13 +8,17 @@
 #include <unistd.h>
 #include <limits.h>
 
-int print_str(char *str);
-int _strcmp(char * command, char *str);
-int _strlen(char *s);
-void start_execute(char **argv);
-char *_strcat(char *dest, char *src);
-char *_strcpy(char *dest, char *src);
-char *get_env(char *name);
+/* strings prototypes */
+int print_str(char*);
+int _strcmp(char*, char*);
+int _strlen(char*);
+int _strncmp(char *, char *, int);
+char *_strcat(char*, char*);
+char *_strcpy(char*, char*);
+char *_strncpy(char*, char*, int);
+char *_strncat(char*, char*, int);
 
+char *get_env(char*);
+void start_execute(char**);
 #endif
 

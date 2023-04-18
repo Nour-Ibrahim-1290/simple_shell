@@ -1,9 +1,6 @@
 #include "main.h"
 #include <stdio.h>
 
-extern char **environ;
-
-char *get_env(char *name);
 
 /**
  * main - prompt to our shell
@@ -81,54 +78,18 @@ int main(int ac, char **argv)
 			token = strtok(NULL, delim);
 		}
 		argv[i] = NULL;
-
-
-		last_arg = argv[num_tokens - 2];
-
-		printf("%s%d\n", last_arg, _strlen(last_arg));
-
+		
 		/* omitting the new line character */
+		last_arg = argv[num_tokens - 2];
 		len_last = _strlen(last_arg);
 		if (len_last > 0 && last_arg[len_last - 1] == '\n')
 			last_arg[len_last - 1] = '\0';
-
-		/*printf("%s%d\n", last_arg, _strlen(last_arg));*/
+		
+		printf("%s\n", get_env("PATH"));
 
 		/*executable case */
-		start_execute(argv);
+		/*start_execute(argv);*/
 	}
 	free(command);
 	free(command_copy);
-}
-
-/**
- * get_env - return the value of the variable name passed to it
- * @name: the name of env variable to be searched
- *
- * Return: a pointet to a string of the value of the env variable passed
- * NULL if not found
- */
-
-char *get_env(char *name)
-{
-	char *var, *value, *str;
-	unsigned int i = 0;
-
-	while (environ[i] != NULL)
-	{
-		str = malloc(sizeof(char) * _strlen(environ[i]) + 1);
-		if (str == NULL)
-			return (NULL);
-		str = _strcpy(str, environ[i]);
-		var = strtok(str, "=");
-		value = strtok(NULL, "=");
-
-		if (_strcmp(var,name) == 0)
-		{
-			return (value);
-		}
-		free(str);
-		i++;
-	}
-	return (NULL);
 }
