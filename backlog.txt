@@ -7,6 +7,10 @@ Back Logged...
 - Implementation of gentenv - DONE
 - execution of executable commands - DONE
 - separation of parsing from main - DONE
+- Handling pressing ENTER key next to a Shell - DONE
+- Handling Parsing Pipelines (Are pipelining allowed between built-ins and executables?),
+	If not, then handling pipelining should occure in exeute executable commands only.
+- Implement strdup
 
 Status: betty has an issue with calling environ in execute.c
 
@@ -19,3 +23,69 @@ I. main.c
 - test after implementing getenv
 - test after implementing execute
 - test after separating parsing from main
+
+
+Functions Summary:
+-------------------
+#include <unistd.h>
+- access - int access(const char *pathname, int mode);
+	checks wthether the calling process can access the file pathname.
+	The mode specifies the accessibility check(s) to be performed,
+	and is either the value F_OK, or a mask consisting of the bitwise
+	OR of one or more of R_OK, W_OK, and X_OK.
+	Answer:-- "Assuming I'm a setuid binary) can the user who invoked
+		me read/write/execute this file?
+	Return: Success 0, Failure -1
+- chdir - int chdir(const char *path);
+	changed the current working directory of the calling process to
+	the directory specified in path.
+	Return: Success 0, Failure -1 (errno)
+- close - int close(int fd);
+	closes a file discriptor, so that it no longer refers to any file
+	and may be reused.
+	If fd is the last file decriptor referring to underlying open file
+	description (open(2)), the resources associated with the open file
+	description are freed; if the file descriptor was the last refernce
+	to a file which has been removed using (unlink(2)), the file is
+	deleted.
+	Return: Success 0, Failure -1 (errno)
+- fork - pid_t fork(void);
+	creates a new process by duplicating the calling process.
+	The new process is referred to as the child process.The calling
+	The calling process is referred to as the parent process.
+	The child doesn't inherit parent memory locks.
+	The child doesn't inherit timers from its parent.
+	The child doen't inherit directory change notifications.
+	The termination signal of a child is always SIGCHLD
+
+#include <sys/types.h>
+#include <dirent.h>
+- closedir - int closedir(DIR *drip)
+	closes the directory stram associated with drip, and the underlying
+	file descriptor associated with drip.
+	Return: Success 0, Failure -1 (errno)
+
+#include <stdlib.h>
+- exit - noreturn void exit (int status);
+	causes normal process termination and the least significant byte
+	of status is returned to the parent (wait(2))
+	The C standard specifies two constants, EXIT_SUCCESS and
+	EXIT_FAILURE, that may be passed to exit() to indicate successful
+	or unsuccessful termination, respectively.
+	Return: noreturn (void)
+- _exit - noreturn void _exit(int status);
+	terminates the calling process "immediately". any child processes
+	are inherited by init(1).
+	The value status & 0xFF is retirned to the parent process as the
+	process's exit status, and can be collected by the parent using
+	using one of the wait(2) family calls.
+	Return: noreturn (void)
+
+#include <stdio.h>
+- fflush - int fflush(FILE *straem);
+	For output straems, fflush forces a write of all user-space
+	buffered data for the given output or update straem via the
+	stream's underlying write function.
+	IF the stream argument is NULL, fflush flushes all open output
+	flushes all output streams.
+	Return: Success 0, Failure EOF (errno)

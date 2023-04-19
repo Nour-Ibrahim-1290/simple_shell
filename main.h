@@ -8,6 +8,8 @@
 #include <unistd.h>
 #include <limits.h>
 #include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 
 /* handling enviromental values */
 char *_getenv(char *name);
@@ -24,6 +26,7 @@ int _strlen(char *s);
 char *_strcat(char *dest, char *src);
 char *_strcpy(char *dest, char *src);
 int _strncmp(char *, char *, int);
+char *_strdup(char *);
 
 #endif
 

@@ -6,8 +6,8 @@ int _strcmp(char *command, char *str);
 int _strlen(char *s);
 char *_strcpy(char *dest, char *src);
 char *_strcat(char *dest, char *src);
-int _strncmp(char*, char*, int);
-
+int _strncmp(char *, char *, int);
+char *_strdup(char *);
 /**
  * print_str - print string to the standard output
  * @str: string to print
@@ -52,6 +52,30 @@ int _strcmp(char *command, char *str)
 	return (0);
 }
 
+/**
+ *
+ */
+char *_strdup(char *src)
+{
+	char *dest;
+	int i = 0, len;
+
+	if (src == NULL)
+		return (NULL);
+
+	len = _strlen(src);
+	dest = malloc(sizeof(char) * len);
+	if (dest == NULL)
+		return (NULL);;
+
+	while (i < len)
+	{
+		dest[i] = src[i];
+		i++;
+	}
+	
+	return (dest);
+}
 /**
  * _strlen - a function that returns the length of a string.
  * @s: the string to be calculated for its length
@@ -157,8 +181,11 @@ int _strncmp(char *s1, char *s2, int n)
 		else
 			break;
 	}
+
 	if (*(s1 + i) == *(s2 + i) || i == n)
+	{
 		return (0);
+	}
 	else
 		return ((int)(*(s1 + i)) - (int)(*(s2 + i)));
 }
