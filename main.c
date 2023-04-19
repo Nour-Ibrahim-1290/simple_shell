@@ -31,16 +31,6 @@ int main(int ac, char **argv)
 			return (-1);
 		}
 
-
-		/* its better to include in parsing section */
-		if (num_chars_read == 5)
-		{
-			if (_strcmp(command, "exit\n") == 0)
-			{
-				print_str("exiting shell ... \n");
-				return (-1);
-			}
-		}
 		/* Parse and execute the command*/
 		parse(command, num_chars_read, argv);
 	}

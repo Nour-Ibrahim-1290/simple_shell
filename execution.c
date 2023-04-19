@@ -16,6 +16,8 @@ char *get_location(char *);
 void execute(char **argv)
 {
 	char *command_str = NULL, *command = NULL;
+	pid_t pid, wpid;
+	int status;
 
 	if (argv)
 	{
@@ -23,11 +25,28 @@ void execute(char **argv)
 
 		command = get_location(command_str);
 
-		/*printf("%s\n", command);*/
-		if (execve(command, argv, NULL) == -1)
-			perror("Error");
+		pid = fork();
+		if (pid == 0)
+		{
+			/* execution */
+			if (execve(command, argv, NULL) == -1)
+				perror("Error");
+			exit(EXIT_FAILURE);
+		}
+		else if (pid < 0)
+		{
+			perror("lsh");
+		}
+		else
+		{
+			do
+			{
+				wpid = waitpid(pid, &status, WUNTRACED);
+			} while (!WIFEXITED(status) && !WIFSIGNALED(status));
+		}
 	}
 	(void)command;
+	(void)wpid;
 }
 
 /**
@@ -73,13 +92,15 @@ char *get_location(char *command)
 	if (path)
 	{
 		path_copy = strdup(path);
-		command_length = strlen(command);
+		command_length = _strlen(command);
 		path_token = strtok(path_copy, ":");
 
 		while (path_token != NULL)
 		{
 			dir_length = _strlen(path_token);
-			file_path = malloc(command_length + dir_length + 2);
+			file_path = malloc(sizeof(char) * (command_length + dir_length + 2));
+			if (file_path == NULL)
+				return (NULL);
 			_strcpy(file_path, path_token);
 			_strcat(file_path, "/");
 			_strcat(file_path, command);
