@@ -11,17 +11,20 @@
 
 int main(int ac, char **argv)
 {
-	char *prompt = "(eshell) $ ";
+	char *prompt = "(shell) $ ";
 	char *command = NULL;
 	size_t n = 0;
 	ssize_t num_chars_read;
 
 	/* voiding unused vars*/
 	(void)ac;
+	(void)argv;
 
+	/*signal(SIGINT, 0);*/
 	while (1)
 	{
-		print_str(prompt);
+		if (isatty(STDIN_FILENO))
+			print_str(prompt);
 		num_chars_read = getline(&command, &n, stdin);
 
 		/* checking error cases of getline() - exit conditions */
@@ -32,7 +35,7 @@ int main(int ac, char **argv)
 		}
 
 		/* Parse and execute the command*/
-		parse(command, num_chars_read, argv);
+		parse(command, num_chars_read);
 	}
 	free(command);
 }

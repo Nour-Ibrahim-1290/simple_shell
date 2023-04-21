@@ -10,23 +10,28 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <signal.h>
+
+/* external envirment variable*/
+extern char **environ;
 
 /* handling enviromental values */
-char *_getenv(char *name);
-void execute(char **argv);
-char *get_location(char *command);
+char *_getenv(char *);
+void execute(char **);
+char *get_location(char *);
 
 /* parsing */
-void parse(char *, ssize_t, char **);
+void parse(char *, ssize_t);
 
 /* string functions */
-int print_str(char *str);
-int _strcmp(char * command, char *str);
-int _strlen(char *s);
-char *_strcat(char *dest, char *src);
-char *_strcpy(char *dest, char *src);
+int print_str(char *);
+int _strcmp(char *, char *);
+int _strlen(char *);
+char *_strcat(char *, char *);
+char *_strcpy(char *, char *);
 int _strncmp(char *, char *, int);
 char *_strdup(char *);
+char *_strcpy_at(char *, char *, int);
 
 #endif
 
