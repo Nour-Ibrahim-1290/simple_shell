@@ -9,10 +9,18 @@ Back Logged...
 - separation of parsing from main - DONE
 - Handling pressing ENTER key next to a Shell - DONE
 - Handling Parsing Pipelines (Are pipelining allowed between built-ins and executables?),
-	If not, then handling pipelining should occure in exeute executable commands only.
-- Implement strdup
+	If not, then handling pipelining should occure in exeute executable commands only. - ADVANCED
+- Implement strdup - DONE
+- Implement _strcpy_at - DONE
+- Handle exit and env as builtin commands - DONE
+- Handle non-interactive execution - DONE
+- Handle formatting commands as /bin/cmd - DONE
+- Test on Ubuntu enviroment to non_found error
+- Reformatting perrors
+- Handling memory leaks in valdrind checks
+- check executing "clear" on Ubuntu enviroment
 
-Status: betty has an issue with calling environ in execute.c
+Status: betty has an issue with calling environ in execute.c (on Windows only)
 
 Test Cases...
 I. main.c
