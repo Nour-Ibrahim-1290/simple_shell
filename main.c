@@ -5,11 +5,12 @@
  * main - prompt to our shell
  * @ac: count of arguments
  * @argv: list of arguments
+ * @env: list of enviroments
  *
  * Return: 0, -1 for exit
  */
 
-int main(int ac, char **argv)
+int main(int ac, char **argv, char **env)
 {
 	char *prompt = "(shell) $ ";
 	char *command = NULL;
@@ -18,7 +19,6 @@ int main(int ac, char **argv)
 
 	/* voiding unused vars*/
 	(void)ac;
-	(void)argv;
 
 	/*signal(SIGINT, 0);*/
 	while (1)
@@ -35,8 +35,12 @@ int main(int ac, char **argv)
 		}
 
 		/* Parse and execute the command*/
-		parse(command, num_chars_read);
+		parse(command, num_chars_read, env);
 	}
 	free(command);
+	_free(argv);
+	free(argv);
+	_free(env);
+	free(env);
 }
 
