@@ -3,19 +3,19 @@
 
 
 void exit_cmd(char *cmd);
-int env_cmd(char *cmd);
+int env_cmd(char *cmd, char **env);
 int valid_cmd(char *cmd);
-void parse(char *command, ssize_t num_chars_read);
-
+void parse(char *command, ssize_t num_chars_read, char **env);
 
 /**
  * parse - parsing a command
  * @command: to be parsed
  * @num_chars_read: length of command
+ * @env: list of enviroments from main func
  *
  * Return: void
  */
-void parse(char *command, ssize_t num_chars_read)
+void parse(char *command, ssize_t num_chars_read, char **env)
 {
 	char **argv;
 	char *command_copy = NULL, *token;
@@ -73,14 +73,14 @@ void parse(char *command, ssize_t num_chars_read)
 	exit_cmd(argv[0]);
 
 	/* execute env builtin command*/
-	if (env_cmd(argv[0]) == 0)
+	if (env_cmd(argv[0], env) == 0)
 		return;
 
 	/* check if a valid entry or not*/
 	if (valid_cmd(argv[0]) == 1)
 		return;
 
-	execute(argv);
+	execute(argv, env);
 }
 
 /**
@@ -103,19 +103,20 @@ void exit_cmd(char *cmd)
 /**
  * env_cmd - handling exit built-in command
  * @cmd: 1st token in argv from parse
+ * @env: list of enviroments from main func
  *
  * Return: 0 Success, 1 other cmd
  */
-int env_cmd(char *cmd)
+int env_cmd(char *cmd, char **env)
 {
 	size_t i;
 
 	/* handling exit*/
 	if (_strcmp(cmd, "env") == 0)
 	{
-		for (i = 0; environ[i] != NULL; i++)
+		for (i = 0; env[i] != NULL; i++)
 		{
-			print_str(environ[i]);
+			print_str(env[i]);
 			print_str("\n");
 		}
 		return (0);

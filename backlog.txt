@@ -18,7 +18,8 @@ Back Logged...
 - Test on Ubuntu enviroment to non_found error
 - Reformatting perrors
 - Handling memory leaks in valdrind checks
-- check executing "clear" on Ubuntu enviroment
+- check executing "clear" on Ubuntu enviroment - DONE
+- changing enviroment using env from main function instead of environ - DONE
 
 Status: betty has an issue with calling environ in execute.c (on Windows only)
 

@@ -12,16 +12,18 @@
 #include <sys/wait.h>
 #include <signal.h>
 
-/* external envirment variable*/
-extern char **environ;
 
-/* handling enviromental values */
-char *_getenv(char *);
-void execute(char **);
-char *get_location(char *);
+/* execution */
+char *_getenv(char *, char **);
+void execute(char **, char **);
+char *get_location(char *, char **);
+void _free(char **);
 
 /* parsing */
-void parse(char *, ssize_t);
+void parse(char *, ssize_t, char **);
+void exit_cmd(char *);
+int valid_cmd(char *);
+int env_cmd(char *, char **);
 
 /* string functions */
 int print_str(char *);

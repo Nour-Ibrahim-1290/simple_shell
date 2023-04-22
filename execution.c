@@ -1,19 +1,20 @@
 #include "main.h"
 #include <stdio.h>
 
-void execute(char **);
-char *_getenv(char *);
-char *get_location(char *);
+void execute(char **, char **);
+char *_getenv(char *, char **);
+char *get_location(char *, char **);
 void _free(char **argv);
 
 
 /**
  * execute - execute file of an executable command
  * @argv: tokens of the command generated from getline
+ * @env: enviroments argument form main func
  *
  * Return: void
  */
-void execute(char **argv)
+void execute(char **argv, char **env)
 {
 	char *command_str = NULL, *command = NULL;
 	pid_t pid, wpid;
@@ -24,22 +25,22 @@ void execute(char **argv)
 		command_str = argv[0];
 		_strcpy_at(command_str, argv[0], _strlen("/bin/"));
 
-		command = get_location(command_str);
+		command = get_location(command_str, env);
 
 		if (command == NULL)
-			perror("./hsh: No such file or directory");
+			perror("./hsh: ");
 
 		pid = fork();
 		if (pid == 0)
 		{
 			/* execution */
-			if (execve(command, argv, NULL) == -1)
-				perror("Error");
+			if (execve(command, argv, env) == -1)
+				perror("./hsh: ");
 			exit(EXIT_FAILURE);
 		}
 		else if (pid < 0)
 		{
-			perror("./hsh");
+			perror("./hsh: ");
 		}
 		else
 		{
@@ -73,23 +74,24 @@ void _free(char **argv)
 /**
  * _getenv - return the value of the variable name passed to it
  * @name: the name of env variable to be searched
+ * @env: enviroments argument form main func
  *
  * Return: a pointet to a string of the value of the env variable passed
  * NULL if not found
  */
 
-char *_getenv(char *name)
+char *_getenv(char *name, char **env)
 {
 	char *value = NULL;
 	size_t i;
 	size_t name_len = _strlen(name);
 
-	for (i = 0; environ[i] != NULL; i++)
+	for (i = 0; env[i] != NULL; i++)
 	{
-		if ((_strncmp(name, environ[i], name_len) == 0) &&
-				(environ[i][name_len] == '='))
+		if ((_strncmp(name, env[i], name_len) == 0) &&
+				(env[i][name_len] == '='))
 		{
-			value = &environ[i][name_len + 1];
+			value = &env[i][name_len + 1];
 			break;
 		}
 	}
@@ -99,16 +101,17 @@ char *_getenv(char *name)
 /**
  * get_location - get the location of an executable command file
  * @command: command string
+ * @env: enviroments argument form main func
  *
  * Return: string file_path
  */
-char *get_location(char *command)
+char *get_location(char *command, char **env)
 {
 	char *path, *path_copy, *path_token, *file_path;
 	int command_length, dir_length;
 	struct stat buffer;
 
-	path = _getenv("PATH");
+	path = _getenv("PATH", env);
 	if (path)
 	{
 		path_copy = _strdup(path);
