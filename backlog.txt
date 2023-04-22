@@ -15,11 +15,12 @@ Back Logged...
 - Handle exit and env as builtin commands - DONE
 - Handle non-interactive execution - DONE
 - Handle formatting commands as /bin/cmd - DONE
-- Test on Ubuntu enviroment to non_found error
-- Reformatting perrors
-- Handling memory leaks in valdrind checks
 - check executing "clear" on Ubuntu enviroment - DONE
 - changing enviroment using env from main function instead of environ - DONE
+- Test on Ubuntu enviroment to non_found error
+- Reformatting perrors to match shell errors (very important)
+- Handling memory leaks in valdrind checks
+- Handling both cmd and /bin/cmd as shell does (very important)
 
 Status: betty has an issue with calling environ in execute.c (on Windows only)
 
