@@ -1,5 +1,4 @@
 #include "main.h"
-#include <stdio.h>
 
 void execute(char **, char **);
 char *_getenv(char *, char **);
@@ -28,19 +27,26 @@ void execute(char **argv, char **env)
 		command = get_location(command_str, env);
 
 		if (command == NULL)
-			perror("./hsh: ");
+		{
+			perror("./hsh");
+			return;
+		}
 
 		pid = fork();
 		if (pid == 0)
 		{
 			/* execution */
 			if (execve(command, argv, env) == -1)
-				perror("./hsh: ");
+			{
+				free(command);
+				_free(argv);
+				perror("./hsh");
+			}
 			exit(EXIT_FAILURE);
 		}
 		else if (pid < 0)
 		{
-			perror("./hsh: ");
+			perror("./hsh");
 		}
 		else
 		{
