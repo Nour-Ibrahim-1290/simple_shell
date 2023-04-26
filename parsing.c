@@ -1,7 +1,5 @@
 #include "main.h"
 
-
-
 void exit_cmd(char *cmd);
 int env_cmd(char *cmd, char **env);
 int valid_cmd(char *cmd);
@@ -13,12 +11,12 @@ void parse(char *command, ssize_t num_chars_read, char **env);
  * @num_chars_read: length of command
  * @env: list of enviroments from main func
  *
- * Return: void
+ * Return: 0 Success, -1 failure
  */
 void parse(char *command, ssize_t num_chars_read, char **env)
 {
 	char **argv;
-	char *command_copy = NULL, *token;
+	char *command_copy = NULL, *token = NULL;
 	const char *delim = " \n";
 	int num_tokens = 0, i;
 
@@ -26,7 +24,8 @@ void parse(char *command, ssize_t num_chars_read, char **env)
 	command_copy = malloc(sizeof(char) * num_chars_read);
 	if (command_copy == NULL)
 	{
-		perror("memory allocation error");
+		/* 12: Cannot allocate memory */
+		perror("./hsh");
 		return;
 	}
 	_strcpy(command_copy, command);
@@ -47,7 +46,8 @@ void parse(char *command, ssize_t num_chars_read, char **env)
 	argv = malloc(sizeof(char *) * num_tokens);
 	if (argv == NULL)
 	{
-		perror("memory allocation error");
+		/* 12: Cannot allocate memory */
+		perror("./hsh");
 		return;
 	}
 	token = strtok(command_copy, delim);
@@ -56,7 +56,8 @@ void parse(char *command, ssize_t num_chars_read, char **env)
 		argv[i] = malloc(sizeof(char) * _strlen(token));
 		if (argv[i] == NULL)
 		{
-			perror("memory allocation erroe");
+			/* 12: Cannot allocate memory*/
+			perror("./hsh");
 			return;
 		}
 		_strcpy(argv[i], token);
@@ -69,17 +70,18 @@ void parse(char *command, ssize_t num_chars_read, char **env)
 	if (argv[0] == NULL)
 		return;
 
-	/* execute exit builtin command*/
-	exit_cmd(argv[0]);
+	/* execute exit builtin command
+	exit_cmd(argv[0]);*/
 
-	/* execute env builtin command*/
+	/* execute env builtin command
 	if (env_cmd(argv[0], env) == 0)
-		return;
+		return;*/
 
 	/* check if a valid entry or not*/
-	if (valid_cmd(argv[0]) == 1)
+	if (valid_cmd(argv[0]) == -1)
 		return;
 
+	/* executing executable commands*/
 	execute(argv, env);
 }
 
@@ -94,7 +96,6 @@ void exit_cmd(char *cmd)
 	/* handling exit*/
 	if (_strcmp(cmd, "exit") == 0)
 	{
-		print_str("exiting shell...\n");
 		exit(0);
 	}
 }
@@ -105,7 +106,7 @@ void exit_cmd(char *cmd)
  * @cmd: 1st token in argv from parse
  * @env: list of enviroments from main func
  *
- * Return: 0 Success, 1 other cmd
+ * Return: 0 Success, -1 other cmd
  */
 int env_cmd(char *cmd, char **env)
 {
@@ -122,7 +123,7 @@ int env_cmd(char *cmd, char **env)
 		return (0);
 	}
 
-	return (1);
+	return (-1);
 }
 
 
@@ -130,15 +131,17 @@ int env_cmd(char *cmd, char **env)
  * valid_cmd - check if  the command is_valid
  * @cmd: 1st token in argv from parse
  *
- * Return: 0 Success, 1 error
+ * Return: 0 Success, -1 error
  */
 int valid_cmd(char *cmd)
 {
 	/* handling exit*/
 	if (_strncmp(cmd, "/bin/", _strlen("/bin/")) != 0)
 	{
-		perror("./hsh: No such file or directory");
-		return (1);
+		errno = 2;
+		/* needs to organically handled by execve*/
+		perror("./hsh");
+		return (-1);
 	}
 
 	return (0);

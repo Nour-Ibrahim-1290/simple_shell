@@ -1,5 +1,4 @@
 #include "main.h"
-#include <stdio.h>
 
 /**
  * main - prompt to our shell
@@ -16,21 +15,25 @@ int main(int ac, char **argv, char **env)
 	char *command = NULL;
 	size_t n = 0;
 	ssize_t num_chars_read;
+	int flag = 0;
 
 	/* voiding unused vars*/
 	(void)ac;
 
-	/*signal(SIGINT, 0);*/
 	while (1)
 	{
 		if (isatty(STDIN_FILENO))
+		{
+			flag = 1;
 			print_str(prompt);
+		}
 		num_chars_read = getline(&command, &n, stdin);
 
 		/* checking error cases of getline() - exit conditions */
 		if (num_chars_read == -1)
 		{
-			print_str("exiting shell ... \n");
+			if (flag == 1)
+				print_str("\n");
 			return (-1);
 		}
 
@@ -39,8 +42,7 @@ int main(int ac, char **argv, char **env)
 	}
 	free(command);
 	_free(argv);
-	free(argv);
 	_free(env);
-	free(env);
-}
 
+	return (0);
+}
