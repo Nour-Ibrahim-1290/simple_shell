@@ -51,7 +51,8 @@ void parse(char *command, ssize_t num_chars_read, char **env)
 		return;
 	}
 	token = strtok(command_copy, delim);
-	for (i = 0; token != NULL; i++)
+	/* account for check 1*/
+	for (i = 0; i < 1 || token != NULL; i++)
 	{
 		argv[i] = malloc(sizeof(char) * _strlen(token));
 		if (argv[i] == NULL)
