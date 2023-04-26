@@ -12,14 +12,18 @@
 int main(int ac, char **argv, char **env)
 {
 	char *prompt = "(shell) $ ";
-	char *command = NULL;
+	char *command = NULL, *error_head;
 	size_t n = 0;
 	ssize_t num_chars_read;
 	int flag = 0;
 
 	/* voiding unused vars*/
 	(void)ac;
+	error_head = malloc(sizeof(char) * _strlen(argv[0]));
+	if (error_head == NULL)
+		return (-1);
 
+	error_head = argv[0];
 	while (1)
 	{
 		if (isatty(STDIN_FILENO))
@@ -38,7 +42,7 @@ int main(int ac, char **argv, char **env)
 		}
 
 		/* Parse and execute the command*/
-		parse(command, num_chars_read, env);
+		parse(command, num_chars_read, env, error_head);
 	}
 	free(command);
 	_free(argv);

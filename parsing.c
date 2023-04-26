@@ -2,18 +2,19 @@
 
 void exit_cmd(char *cmd);
 int env_cmd(char *cmd, char **env);
-int valid_cmd(char *cmd);
-void parse(char *command, ssize_t num_chars_read, char **env);
+int valid_cmd(char *cmd, char *err);
+void parse(char *command, ssize_t num_chars_read, char **env, char *err);
 
 /**
  * parse - parsing a command
  * @command: to be parsed
  * @num_chars_read: length of command
  * @env: list of enviroments from main func
+ * @err: a pointer to the error_head
  *
  * Return: 0 Success, -1 failure
  */
-void parse(char *command, ssize_t num_chars_read, char **env)
+void parse(char *command, ssize_t num_chars_read, char **env, char *err)
 {
 	char **argv;
 	char *command_copy = NULL, *token = NULL;
@@ -25,7 +26,7 @@ void parse(char *command, ssize_t num_chars_read, char **env)
 	if (command_copy == NULL)
 	{
 		/* 12: Cannot allocate memory */
-		perror("./hsh");
+		perror(err);
 		return;
 	}
 	_strcpy(command_copy, command);
@@ -47,7 +48,7 @@ void parse(char *command, ssize_t num_chars_read, char **env)
 	if (argv == NULL)
 	{
 		/* 12: Cannot allocate memory */
-		perror("./hsh");
+		perror(err);
 		return;
 	}
 	token = strtok(command_copy, delim);
@@ -58,7 +59,7 @@ void parse(char *command, ssize_t num_chars_read, char **env)
 		if (argv[i] == NULL)
 		{
 			/* 12: Cannot allocate memory*/
-			perror("./hsh");
+			perror(err);
 			return;
 		}
 		_strcpy(argv[i], token);
@@ -79,7 +80,7 @@ void parse(char *command, ssize_t num_chars_read, char **env)
 		return;*/
 
 	/* check if a valid entry or not*/
-	if (valid_cmd(argv[0]) == -1)
+	if (valid_cmd(argv[0], err) == -1)
 		return;
 
 	/* executing executable commands*/
@@ -131,17 +132,18 @@ int env_cmd(char *cmd, char **env)
 /**
  * valid_cmd - check if  the command is_valid
  * @cmd: 1st token in argv from parse
+ * @err: a pointer to error_head
  *
  * Return: 0 Success, -1 error
  */
-int valid_cmd(char *cmd)
+int valid_cmd(char *cmd, char *err)
 {
 	/* handling exit*/
 	if (_strncmp(cmd, "/bin/", _strlen("/bin/")) != 0)
 	{
 		errno = 2;
 		/* needs to organically handled by execve*/
-		perror("./hsh");
+		perror(err);
 		return (-1);
 	}
 

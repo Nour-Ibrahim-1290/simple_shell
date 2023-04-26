@@ -13,7 +13,6 @@
 #include <signal.h>
 #include <errno.h>
 
-
 /* execution */
 char *_getenv(char *, char **);
 void execute(char **, char **);
@@ -21,9 +20,9 @@ char *get_location(char *, char **);
 void _free(char **);
 
 /* parsing */
-void parse(char *, ssize_t, char **);
+void parse(char *, ssize_t, char **, char *);
 void exit_cmd(char *);
-int valid_cmd(char *);
+int valid_cmd(char *, char *);
 int env_cmd(char *, char **);
 
 /* string functions */
