@@ -15,7 +15,8 @@
 
 /* execution */
 char *_getenv(char *, char **);
-void execute(char **, char **);
+void execute(char **, char **, char *);
+void execute_lite(char **, char **, char *);
 char *get_location(char *, char **);
 void _free(char **);
 

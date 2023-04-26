@@ -43,6 +43,13 @@ void parse(char *command, ssize_t num_chars_read, char **env, char *err)
 	}
 	num_tokens++;
 
+	/* for check 1 */
+	if (num_tokens > 1)
+	{
+		errno = 2;
+		perror(err);
+		return;
+	}
 	/* Read the tokens them selves*/
 	argv = malloc(sizeof(char *) * num_tokens);
 	if (argv == NULL)
@@ -84,7 +91,7 @@ void parse(char *command, ssize_t num_chars_read, char **env, char *err)
 		return;
 
 	/* executing executable commands*/
-	execute(argv, env);
+	execute_lite(argv, env, err);
 }
 
 /**

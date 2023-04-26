@@ -1,19 +1,73 @@
 #include "main.h"
 
-void execute(char **, char **);
+void execute(char **, char **, char *);
 char *_getenv(char *, char **);
 char *get_location(char *, char **);
 void _free(char **argv);
+void execute_lite(char **, char **, char *);
+
+/**
+ * execute_lite - execute file of an executable command
+ * @argv: tokens of the command generated from getline
+ * @env: enviroments argument form main func
+ * @err: a pointer to error head
+ *
+ * Return: void
+ */
+void execute_lite(char **argv, char **env, char *err)
+{
+	char *command = NULL;
+	pid_t pid, wpid;
+	int status;
+
+	if (argv)
+	{
+		command = argv[0];
+
+		if (command == NULL)
+		{
+			perror(err);
+			return;
+		}
+
+		pid = fork();
+		if (pid == 0)
+		{
+			/* execution */
+			if (execve(command, argv, env) == -1)
+			{
+				/*free(command);*/
+				/*_free(argv);*/
+				perror(err);
+			}
+			exit(EXIT_FAILURE);
+		}
+		else if (pid < 0)
+		{
+			perror(err);
+		}
+		else
+		{
+			do {
+				wpid = waitpid(pid, &status, WUNTRACED);
+			} while (!WIFEXITED(status) && !WIFSIGNALED(status));
+		}
+	}
+	(void)wpid;
+	_free(argv);
+}
+
 
 
 /**
  * execute - execute file of an executable command
  * @argv: tokens of the command generated from getline
  * @env: enviroments argument form main func
+ * @err: a pointer to error head
  *
  * Return: void
  */
-void execute(char **argv, char **env)
+void execute(char **argv, char **env, char *err)
 {
 	char *command_str = NULL, *command = NULL;
 	pid_t pid, wpid;
@@ -28,7 +82,7 @@ void execute(char **argv, char **env)
 
 		if (command == NULL)
 		{
-			perror("./hsh");
+			perror(err);
 			return;
 		}
 
@@ -40,13 +94,13 @@ void execute(char **argv, char **env)
 			{
 				free(command);
 				_free(argv);
-				perror("./hsh");
+				perror(err);
 			}
 			exit(EXIT_FAILURE);
 		}
 		else if (pid < 0)
 		{
-			perror("./hsh");
+			perror(err);
 		}
 		else
 		{
