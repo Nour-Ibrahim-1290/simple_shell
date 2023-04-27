@@ -71,7 +71,7 @@ void execute(char **argv, char **env, char *err)
 {
 	char *command_str = NULL, *command = NULL;
 	pid_t pid, wpid;
-	int status;
+	int status = 0;
 
 	if (argv)
 	{
@@ -95,18 +95,22 @@ void execute(char **argv, char **env, char *err)
 				free(command);
 				_free(argv);
 				free(command_str);
+				/*printf("status fail = %d\n", status);*/
 				perror(err);
 			}
+			/*printf("status if = %d\n", status);*/
 			exit(EXIT_FAILURE);
 		}
 		else if (pid < 0)
 		{
+			/*printf("status elif = %d\n", status);*/
 			perror(err);
 		}
 		else
 		{
 			do {
 				wpid = waitpid(pid, &status, WUNTRACED);
+				/*printf("status = %d\n", status);*/
 			} while (!WIFEXITED(status) && !WIFSIGNALED(status));
 		}
 	}

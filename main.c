@@ -1,5 +1,8 @@
 #include "main.h"
 
+
+void sig_handler(int sig_num);
+
 /**
  * main - prompt to our shell
  * @ac: count of arguments
@@ -11,7 +14,7 @@
 
 int main(int ac, char **argv, char **env)
 {
-	char *prompt = "($) ";
+	char *prompt = "(shell) $ ";
 	char *command = NULL, *error_head;
 	size_t n = 0;
 	ssize_t num_chars_read;
@@ -23,7 +26,11 @@ int main(int ac, char **argv, char **env)
 	if (error_head == NULL)
 		return (-1);
 
+	/* preserving shell exe file name as error head*/
 	error_head = argv[0];
+
+	/* setting signal status*/
+	signal(SIGINT, sig_handler);
 	while (1)
 	{
 		if (isatty(STDIN_FILENO))
@@ -38,7 +45,7 @@ int main(int ac, char **argv, char **env)
 		{
 			if (flag == 1)
 				print_str("\n");
-			return (-1);
+			exit(0);
 		}
 
 		/* Parse and execute the command*/
@@ -49,4 +56,17 @@ int main(int ac, char **argv, char **env)
 	_free(argv);
 	_free(env);
 	return (0);
+}
+
+
+/**
+ * sig_handler - checks if Ctrl C is pressed
+ * @sig_num: int
+ */
+void sig_handler(int sig_num)
+{
+	if (sig_num == SIGINT)
+	{
+		print_str("\n(shell) $ ");
+	}
 }
