@@ -1,75 +1,140 @@
-#include "main.h"
-
-
-void sig_handler(int sig_num);
-
-/**
- * main - prompt to our shell
- * @ac: count of arguments
- * @argv: list of arguments
- * @env: list of enviroments
- *
- * Return: 0, -1 for exit
+/*
+ * File: main.c
+ * Authors: Ukonu, Divine Chisom
+ *          Nobert Patrick
  */
 
-int main(int ac, char **argv, char **env)
+#include "shell.h"
+
+void sig_handler(int sig);
+int execute(char **args, char **front);
+
+/**
+ * sig_handler - Prints a new prompt upon a signal.
+ * @sig: The signal.
+ */
+void sig_handler(int sig)
 {
-	char *prompt = "(shell) $ ";
-	char *command = NULL, *error_head;
-	size_t n = 0;
-	ssize_t num_chars_read;
-	int flag = 0;
+	char *new_prompt = "\n$ ";
 
-	/* voiding unused vars*/
-	(void)ac;
-	error_head = malloc(sizeof(char) * _strlen(argv[0]));
-	if (error_head == NULL)
-		return (-1);
-
-	/* preserving shell exe file name as error head*/
-	error_head = argv[0];
-
-	/* setting signal status*/
-	/*signal(SIGINT, sig_handler);*/
-	while (1)
-	{
-		if (isatty(STDIN_FILENO))
-		{
-			flag = 1;
-			print_str(prompt);
-		}
-		num_chars_read = getline(&command, &n, stdin);
-
-		/* checking error cases of getline() - exit conditions */
-		if (num_chars_read == -1)
-		{
-			if (flag == 1)
-			{
-				print_str("\n");
-				free(command);
-			}
-			exit(0);
-		}
-
-		/* Parse and execute the command*/
-		parse(command, num_chars_read, env, error_head);
-	}
-	/*free(error_head);*/
-	free(command);
-	_free(argv);
-	_free(env);
-	return (0);
+	(void)sig;
+	signal(SIGINT, sig_handler);
+	write(STDIN_FILENO, new_prompt, 3);
 }
 
+/**
+ * execute - Executes a command in a child process.
+ * @args: An array of arguments.
+ * @front: A double pointer to the beginning of args.
+ *
+ * Return: If an error occurs - a corresponding error code.
+ *         O/w - The exit value of the last executed command.
+ */
+int execute(char **args, char **front)
+{
+	pid_t child_pid;
+	int status, flag = 0, ret = 0;
+	char *command = args[0];
+
+	if (command[0] != '/' && command[0] != '.')
+	{
+		flag = 1;
+		command = get_location(command);
+	}
+
+	if (!command || (access(command, F_OK) == -1))
+	{
+		if (errno == EACCES)
+			ret = (create_error(args, 126));
+		else
+			ret = (create_error(args, 127));
+	}
+	else
+	{
+		child_pid = fork();
+		if (child_pid == -1)
+		{
+			if (flag)
+				free(command);
+			perror("Error child:");
+			return (1);
+		}
+		if (child_pid == 0)
+		{
+			execve(command, args, environ);
+			if (errno == EACCES)
+				ret = (create_error(args, 126));
+			free_env();
+			free_args(args, front);
+			free_alias_list(aliases);
+			_exit(ret);
+		}
+		else
+		{
+			wait(&status);
+			ret = WEXITSTATUS(status);
+		}
+	}
+	if (flag)
+		free(command);
+	return (ret);
+}
 
 /**
- * sig_handler - checks if Ctrl C is pressed
- * @sig_num: int
+ * main - Runs a simple UNIX command interpreter.
+ * @argc: The number of arguments supplied to the program.
+ * @argv: An array of pointers to the arguments.
+ *
+ * Return: The return value of the last executed command.
  */
-void sig_handler(int sig_num)
+int main(int argc, char *argv[])
 {
-	if (sig_num == SIGINT)
+	int ret = 0, retn;
+	int *exe_ret = &retn;
+	char *prompt = "$ ", *new_line = "\n";
+
+	name = argv[0];
+	hist = 1;
+	aliases = NULL;
+	signal(SIGINT, sig_handler);
+
+	*exe_ret = 0;
+	environ = _copyenv();
+	if (!environ)
+		exit(-100);
+
+	if (argc != 1)
 	{
-		print_str("\n(shell) $ ");
+		ret = proc_file_commands(argv[1], exe_ret);
+		free_env();
+		free_alias_list(aliases);
+		return (*exe_ret);
 	}
+
+	if (!isatty(STDIN_FILENO))
+	{
+		while (ret != END_OF_FILE && ret != EXIT)
+			ret = handle_args(exe_ret);
+		free_env();
+		free_alias_list(aliases);
+		return (*exe_ret);
+	}
+
+	while (1)
+	{
+		write(STDOUT_FILENO, prompt, 2);
+		ret = handle_args(exe_ret);
+		if (ret == END_OF_FILE || ret == EXIT)
+		{
+			if (ret == END_OF_FILE)
+				write(STDOUT_FILENO, new_line, 1);
+			free_env();
+			free_alias_list(aliases);
+			exit(*exe_ret);
+		}
+	}
+
+	free_env();
+	free_alias_list(aliases);
+	return (*exe_ret);
 }

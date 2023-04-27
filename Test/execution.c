@@ -1,33 +1,34 @@
 #include "main.h"
 
-void execute(char **, char **, char *);
+int execute(char **, char **, char *);
 char *_getenv(char *, char **);
 char *get_location(char *, char **);
 void _free(char **argv);
-void execute_lite(char **, char **, char *);
 
 /**
- * execute_lite - execute file of an executable command
+ * execute - execute file of an executable command
  * @argv: tokens of the command generated from getline
  * @env: enviroments argument form main func
  * @err: a pointer to error head
  *
  * Return: void
  */
-void execute_lite(char **argv, char **env, char *err)
+int execute(char **argv, char **env, char *err)
 {
-	char *command = NULL;
+	char *command_str = NULL, *command = NULL;
 	pid_t pid, wpid;
-	int status;
+	int status = 0;
 
 	if (argv)
 	{
-		command = argv[0];
+		command_str = argv[0];
+		command = get_location(argv[0], env);
 
 		if (command == NULL)
 		{
+			free(command);
 			perror(err);
-			return;
+			return (0);
 		}
 
 		pid = fork();
@@ -36,8 +37,6 @@ void execute_lite(char **argv, char **env, char *err)
 			/* execution */
 			if (execve(command, argv, env) == -1)
 			{
-				free(command);
-				_free(argv);
 				perror(err);
 			}
 			exit(EXIT_FAILURE);
@@ -51,78 +50,16 @@ void execute_lite(char **argv, char **env, char *err)
 			do {
 				wpid = waitpid(pid, &status, WUNTRACED);
 			} while (!WIFEXITED(status) && !WIFSIGNALED(status));
+			/*free(command);
+			free(command_str);*/
+			/*_free(argv);*/
 		}
+		/*wait(&status);*/
 	}
 	(void)wpid;
-	_free(argv);
-}
+	(void)command_str;
 
-
-
-/**
- * execute - execute file of an executable command
- * @argv: tokens of the command generated from getline
- * @env: enviroments argument form main func
- * @err: a pointer to error head
- *
- * Return: void
- */
-void execute(char **argv, char **env, char *err)
-{
-	char *command_str = NULL, *command = NULL;
-	pid_t pid, wpid;
-	int status = 0;
-
-	if (argv)
-	{
-		command_str = argv[0];
-		/*_strcpy_at(command_str, argv[0], _strlen("/bin/"));*/
-
-		command = get_location(command_str, env);
-
-		if (command == NULL)
-		{
-			perror(err);
-			return;
-		}
-
-		pid = fork();
-		if (pid == 0)
-		{
-			/* execution */
-			if (execve(command, argv, env) == -1)
-			{
-				/*
-				 * free(command);
-				 * _free(argv);
-				 * free(command_str);
-				 * printf("status fail = %d\n", status);
-				 */
-
-				perror(err);
-			}
-			/*printf("status if = %d\n", status);*/
-			exit(EXIT_FAILURE);
-		}
-		else if (pid < 0)
-		{
-			/*printf("status elif = %d\n", status);*/
-			perror(err);
-		}
-		/*
-		 * else
-		 * {
-		 *	do {
-		 *		wpid = waitpid(pid, &status, WUNTRACED);
-		 *		printf("status = %d\n", status);
-		 *	} while (!WIFEXITED(status) && !WIFSIGNALED(status));
-		 * }
-		 */
-		wait(&status);
-	}
-	(void)command;
-	(void)wpid;
-	_free(argv);
+	return (0);
 }
 
 /**
@@ -135,12 +72,17 @@ void _free(char **argv)
 {
 	int i = 0;
 
-	while (argv[i] != NULL)
+	while (argv && argv[i] != NULL)
 	{
 		free(argv[i]);
+		argv[i] = NULL;
 		i++;
 	}
-	free(argv);
+	if (argv)
+	{
+		free(argv);
+		argv = NULL;
+	}
 }
 /**
  * _getenv - return the value of the variable name passed to it
@@ -178,7 +120,7 @@ char *_getenv(char *name, char **env)
  */
 char *get_location(char *command, char **env)
 {
-	char *path, *path_copy, *path_token, *file_path;
+	char *path = NULL, *path_copy = NULL, *path_token = NULL, *file_path = NULL;
 	int command_length, dir_length;
 	struct stat buffer;
 
@@ -194,7 +136,9 @@ char *get_location(char *command, char **env)
 			dir_length = _strlen(path_token);
 			file_path = malloc(sizeof(char) * (command_length + dir_length + 2));
 			if (file_path == NULL)
+			{
 				return (NULL);
+			}
 
 			_strcpy(file_path, path_token);
 			_strcat(file_path, "/");
@@ -213,6 +157,7 @@ char *get_location(char *command, char **env)
 			}
 		}
 		free(path_copy);
+		free(file_path);
 		if (stat(command, &buffer) == 0)
 			return (command);
 		return (NULL);

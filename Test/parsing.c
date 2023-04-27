@@ -3,7 +3,7 @@
 int exit_cmd(char *cmd);
 int env_cmd(char *cmd, char **env);
 int valid_cmd(char *cmd, char *err);
-void parse(char *command, ssize_t num_chars_read, char **env, char *err);
+int parse(char *command, ssize_t num_chars_read, char **env, char *err);
 
 /**
  * parse - parsing a command
@@ -14,24 +14,24 @@ void parse(char *command, ssize_t num_chars_read, char **env, char *err);
  *
  * Return: 0 Success, -1 failure
  */
-void parse(char *command, ssize_t num_chars_read, char **env, char *err)
+int parse(char *command, ssize_t num_chars_read, char **env, char *err)
 {
 	char **argv;
 	char *command_copy = NULL, *token = NULL;
 	const char *delim = " \n";
-	int num_tokens = 0, i;
+	int num_tokens = 0, i, status;
 
 	/* create a copy from command*/
-	command_copy = malloc(sizeof(char) * num_chars_read);
+	command_copy = malloc(sizeof(char) * num_chars_read + 1);
 	if (command_copy == NULL)
 	{
 		/* 12: Cannot allocate memory */
 		perror(err);
-		return;
+		return (-1);
 	}
 	_strcpy(command_copy, command);
+	command_copy[num_chars_read] = '\0';
 
-	/*printf("%s\n", command_copy);*/
 	/**Tokenization as the main part of Parsing*/
 	/* split the command string into an array of tokens*/
 	token = strtok(command, delim);
@@ -43,25 +43,29 @@ void parse(char *command, ssize_t num_chars_read, char **env, char *err)
 	}
 	num_tokens++;
 
-	/*printf("#tokens = %d\n", num_tokens);*/
 	/* Read the tokens them selves*/
 	argv = malloc(sizeof(char *) * num_tokens);
 	if (argv == NULL)
 	{
 		/* 12: Cannot allocate memory */
 		perror(err);
-		return;
+		free(argv);
+		free(command_copy);
+		return (-1);
 	}
 	token = strtok(command_copy, delim);
 	/* account for check 1 */
 	for (i = 0; token != NULL; i++)
 	{
-		argv[i] = malloc(sizeof(char) * _strlen(token));
+		argv[i] = malloc(sizeof(char) * (_strlen(token) + 1));
 		if (argv[i] == NULL)
 		{
 			/* 12: Cannot allocate memory*/
 			perror(err);
-			return;
+			free(command_copy);
+			_free(argv);
+			free(command_copy);
+			return (-1);
 		}
 		_strcpy(argv[i], token);
 		token = strtok(NULL, delim);
@@ -69,15 +73,18 @@ void parse(char *command, ssize_t num_chars_read, char **env, char *err)
 	argv[i] = NULL;
 
 	free(command_copy);
-	/*printf("command = %s\n", argv[0]);*/
+
 	/* Handling the Case of Pressing ENTER*/
 	if (argv[0] == NULL)
-		return;
+	{
+		_free(argv);
+		return (0);
+	}
 
 	/* execute exit builtin command */
 	if (exit_cmd(argv[0]) == 0)
 	{
-		/*_free(argv);*/
+		_free(argv);
 		/*_free(env);*/
 		/*free(err);*/
 		exit(0);
@@ -86,17 +93,16 @@ void parse(char *command, ssize_t num_chars_read, char **env, char *err)
 	/* execute env builtin command */
 	if (env_cmd(argv[0], env) == 0)
 	{
-		return;
+		_free(argv);
+		return (0);
 	}
 
-	/**
-	* check if a valid entry or not
-	* if (valid_cmd(argv[0], err) == -1)
-	*	return;
-	*/
-
 	/* executing executable commands*/
-	execute(argv, env, err);
+	status = execute(argv, env, err);
+
+	_free(argv);
+
+	return (status);
 }
 
 /**
@@ -142,23 +148,3 @@ int env_cmd(char *cmd, char **env)
 }
 
 
-/**
- * valid_cmd - check if  the command is_valid
- * @cmd: 1st token in argv from parse
- * @err: a pointer to error_head
- *
- * Return: 0 Success, -1 error
- */
-int valid_cmd(char *cmd, char *err)
-{
-	/* handling exit*/
-	if (_strncmp(cmd, "/bin/", _strlen("/bin/")) != 0)
-	{
-		errno = 2;
-		/* needs to organically handled by execve*/
-		perror(err);
-		return (-1);
-	}
-
-	return (0);
-}
