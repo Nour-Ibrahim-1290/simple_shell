@@ -29,7 +29,7 @@ void parse(char *command, ssize_t num_chars_read, char **env, char *err)
 		perror(err);
 		return;
 	}
-	strcpy(command_copy, command);
+	_strcpy(command_copy, command);
 
 	/*printf("%s\n", command_copy);*/
 	/**Tokenization as the main part of Parsing*/
@@ -63,7 +63,7 @@ void parse(char *command, ssize_t num_chars_read, char **env, char *err)
 			perror(err);
 			return;
 		}
-		strcpy(argv[i], token);
+		_strcpy(argv[i], token);
 		token = strtok(NULL, delim);
 	}
 	argv[i] = NULL;

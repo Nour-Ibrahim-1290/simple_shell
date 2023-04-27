@@ -115,18 +115,21 @@ int _strlen(char *s)
 
 char *_strcpy(char *dest, char *src)
 {
-	int i, src_len, dest_len;
+        char *p = dest;
 
-	src_len = _strlen(src);
-	dest_len = _strlen(dest);
-	i = 0;
+        if (dest == NULL)
+                return (NULL);
 
-	while (i <= src_len && src_len <= dest_len)
-	{
-		*(dest + i) = *(src + i);
-		i++;
-	}
-	return (dest);
+        while (*src != '\0')
+        {
+                *dest = *src;
+                dest++;
+                src++;
+        }
+
+        *dest = '\0';
+
+        return (p);
 }
 
 
