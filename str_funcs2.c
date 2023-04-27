@@ -1,8 +1,3 @@
-/*
- * File: str_funcs2.c
- * Authors: Ukonu, Divine Chisom
- *          Nobert Patrick
- */
 
 #include "shell.h"
 

@@ -1,8 +1,3 @@
-/*
- * File: getline.c
- * Authors: Ukonu Divine Chisom
- *          Nobert Patrick
- */
 
 #include "shell.h"
 

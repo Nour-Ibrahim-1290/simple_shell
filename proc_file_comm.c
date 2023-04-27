@@ -1,8 +1,3 @@
-/*
- * File: proc_file_comm.c
- * Authors: Ukonu, Divine Chisom
- *          Nobert Patrick
- */
 
 #include "shell.h"
 
