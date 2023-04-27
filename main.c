@@ -30,7 +30,7 @@ int main(int ac, char **argv, char **env)
 	error_head = argv[0];
 
 	/* setting signal status*/
-	signal(SIGINT, sig_handler);
+	/*signal(SIGINT, sig_handler);*/
 	while (1)
 	{
 		if (isatty(STDIN_FILENO))
@@ -44,7 +44,10 @@ int main(int ac, char **argv, char **env)
 		if (num_chars_read == -1)
 		{
 			if (flag == 1)
+			{
 				print_str("\n");
+				free(command);
+			}
 			exit(0);
 		}
 
