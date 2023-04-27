@@ -115,7 +115,7 @@ int _strlen(char *s)
 
 char *_strcpy(char *dest, char *src)
 {
-	int i, len;
+	int i, src_len, dest_len;
 
 	src_len = _strlen(src);
 	dest_len = _strlen(dest);

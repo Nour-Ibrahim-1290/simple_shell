@@ -92,10 +92,13 @@ void execute(char **argv, char **env, char *err)
 			/* execution */
 			if (execve(command, argv, env) == -1)
 			{
-				/*free(command);
-				_free(argv);
-				free(command_str);
-				printf("status fail = %d\n", status);*/
+				/*
+				 * free(command);
+				 * _free(argv);
+				 * free(command_str);
+				 * printf("status fail = %d\n", status);
+				 */
+
 				perror(err);
 			}
 			/*printf("status if = %d\n", status);*/
@@ -106,13 +109,15 @@ void execute(char **argv, char **env, char *err)
 			/*printf("status elif = %d\n", status);*/
 			perror(err);
 		}
-		/*else
-		{
-			do {
-				wpid = waitpid(pid, &status, WUNTRACED);
-				printf("status = %d\n", status);
-			} while (!WIFEXITED(status) && !WIFSIGNALED(status));
-		}*/
+		/*
+		 * else
+		 * {
+		 *	do {
+		 *		wpid = waitpid(pid, &status, WUNTRACED);
+		 *		printf("status = %d\n", status);
+		 *	} while (!WIFEXITED(status) && !WIFSIGNALED(status));
+		 * }
+		 */
 		wait(&status);
 	}
 	(void)command;

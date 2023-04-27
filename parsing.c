@@ -29,9 +29,9 @@ void parse(char *command, ssize_t num_chars_read, char **env, char *err)
 		perror(err);
 		return;
 	}
-	_strcpy(command_copy, command);
-	printf("len dest = %d, len src = %d\n", src_len, dest_len);
+	strcpy(command_copy, command);
 
+	/*printf("%s\n", command_copy);*/
 	/**Tokenization as the main part of Parsing*/
 	/* split the command string into an array of tokens*/
 	token = strtok(command, delim);
@@ -43,6 +43,7 @@ void parse(char *command, ssize_t num_chars_read, char **env, char *err)
 	}
 	num_tokens++;
 
+	/*printf("#tokens = %d\n", num_tokens);*/
 	/* Read the tokens them selves*/
 	argv = malloc(sizeof(char *) * num_tokens);
 	if (argv == NULL)
@@ -62,12 +63,13 @@ void parse(char *command, ssize_t num_chars_read, char **env, char *err)
 			perror(err);
 			return;
 		}
-		_strcpy(argv[i], token);
+		strcpy(argv[i], token);
 		token = strtok(NULL, delim);
 	}
 	argv[i] = NULL;
 
 	free(command_copy);
+	/*printf("command = %s\n", argv[0]);*/
 	/* Handling the Case of Pressing ENTER*/
 	if (argv[0] == NULL)
 		return;
