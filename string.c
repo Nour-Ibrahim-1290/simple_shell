@@ -117,10 +117,11 @@ char *_strcpy(char *dest, char *src)
 {
 	int i, len;
 
-	len = _strlen(src);
+	src_len = _strlen(src);
+	dest_len = _strlen(dest);
 	i = 0;
 
-	while (i <= len)
+	while (i <= src_len && src_len <= dest_len)
 	{
 		*(dest + i) = *(src + i);
 		i++;

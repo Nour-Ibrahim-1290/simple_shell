@@ -30,6 +30,7 @@ void parse(char *command, ssize_t num_chars_read, char **env, char *err)
 		return;
 	}
 	_strcpy(command_copy, command);
+	printf("len dest = %d, len src = %d\n", src_len, dest_len);
 
 	/**Tokenization as the main part of Parsing*/
 	/* split the command string into an array of tokens*/
