@@ -22,7 +22,7 @@ void _free(char **);
 
 /* parsing */
 void parse(char *, ssize_t, char **, char *);
-void exit_cmd(char *);
+int exit_cmd(char *);
 int valid_cmd(char *, char *);
 int env_cmd(char *, char **);
 

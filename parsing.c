@@ -1,6 +1,6 @@
 #include "main.h"
 
-void exit_cmd(char *cmd);
+int exit_cmd(char *cmd);
 int env_cmd(char *cmd, char **env);
 int valid_cmd(char *cmd, char *err);
 void parse(char *command, ssize_t num_chars_read, char **env, char *err);
@@ -30,7 +30,7 @@ void parse(char *command, ssize_t num_chars_read, char **env, char *err)
 		return;
 	}
 	_strcpy(command_copy, command);
-
+	/*printf("%s %d\n%s %d\n", command, _strlen(command), command_copy, _strlen(command_copy));*/
 
 	/**Tokenization as the main part of Parsing*/
 	/* split the command string into an array of tokens*/
@@ -43,13 +43,6 @@ void parse(char *command, ssize_t num_chars_read, char **env, char *err)
 	}
 	num_tokens++;
 
-	/* for check 1 */
-	if (num_tokens > 1)
-	{
-		errno = 2;
-		perror(err);
-		return;
-	}
 	/* Read the tokens them selves*/
 	argv = malloc(sizeof(char *) * num_tokens);
 	if (argv == NULL)
@@ -59,8 +52,8 @@ void parse(char *command, ssize_t num_chars_read, char **env, char *err)
 		return;
 	}
 	token = strtok(command_copy, delim);
-	/* account for check 1*/
-	for (i = 0; i < 1 || token != NULL; i++)
+	/* account for check 1 */
+	for (i = 0; token != NULL; i++)
 	{
 		argv[i] = malloc(sizeof(char) * _strlen(token));
 		if (argv[i] == NULL)
@@ -79,34 +72,45 @@ void parse(char *command, ssize_t num_chars_read, char **env, char *err)
 	if (argv[0] == NULL)
 		return;
 
-	/* execute exit builtin command
-	exit_cmd(argv[0]);*/
+	/* execute exit builtin command */
+	if (exit_cmd(argv[0]) == 0)
+	{
+		/*_free(argv);*/
+		/*_free(env);*/
+		/*free(err);*/
+		exit(0);
+	}
 
-	/* execute env builtin command
+	/* execute env builtin command */
 	if (env_cmd(argv[0], env) == 0)
-		return;*/
-
-	/* check if a valid entry or not*/
-	if (valid_cmd(argv[0], err) == -1)
+	{
 		return;
+	}
+
+	/**
+	* check if a valid entry or not
+	* if (valid_cmd(argv[0], err) == -1)
+	*	return;
+	*/
 
 	/* executing executable commands*/
-	execute_lite(argv, env, err);
+	execute(argv, env, err);
 }
 
 /**
  * exit_cmd - handling exit built-in command
  * @cmd: 1st token in argv from parse
  *
- * Return: void
+ * Return: 0 on success, -1 on fail
  */
-void exit_cmd(char *cmd)
+int exit_cmd(char *cmd)
 {
 	/* handling exit*/
 	if (_strcmp(cmd, "exit") == 0)
 	{
-		exit(0);
+		return (0);
 	}
+	return (-1);
 }
 
 

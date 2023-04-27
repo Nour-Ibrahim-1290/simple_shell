@@ -43,7 +43,10 @@ int main(int ac, char **argv, char **env)
 
 		/* Parse and execute the command*/
 		parse(command, num_chars_read, env, error_head);
+
+
 	}
+	/*free(error_head);*/
 	free(command);
 	_free(argv);
 	_free(env);

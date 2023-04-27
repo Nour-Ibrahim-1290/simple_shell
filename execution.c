@@ -36,8 +36,8 @@ void execute_lite(char **argv, char **env, char *err)
 			/* execution */
 			if (execve(command, argv, env) == -1)
 			{
-				/*free(command);*/
-				/*_free(argv);*/
+				free(command);
+				_free(argv);
 				perror(err);
 			}
 			exit(EXIT_FAILURE);
@@ -76,7 +76,7 @@ void execute(char **argv, char **env, char *err)
 	if (argv)
 	{
 		command_str = argv[0];
-		_strcpy_at(command_str, argv[0], _strlen("/bin/"));
+		/*_strcpy_at(command_str, argv[0], _strlen("/bin/"));*/
 
 		command = get_location(command_str, env);
 
@@ -94,6 +94,7 @@ void execute(char **argv, char **env, char *err)
 			{
 				free(command);
 				_free(argv);
+				free(command_str);
 				perror(err);
 			}
 			exit(EXIT_FAILURE);
