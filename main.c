@@ -11,7 +11,7 @@
 
 int main(int ac, char **argv, char **env)
 {
-	char *prompt = "(shell) $ ";
+	char *prompt = "($) ";
 	char *command = NULL, *error_head;
 	size_t n = 0;
 	ssize_t num_chars_read;
